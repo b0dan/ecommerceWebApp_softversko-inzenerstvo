@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'Settings')}" sec:authorize="isAuthenticated()">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body sec:authorize="isAuthenticated()">
+        <nav th:replace="~{fragments/fragment_nav :: navigation}"></nav>
+        <div th:replace="~{fragments/fragment_jumbotron :: jumbotron}"></div>
+
+        <div class="container">
+            <h4><b>Delete Profile</b></h4>
+            <br>
+            <p>Are you sure you want to delete your profile: <strong th:text="${user.getUsername() + ' (' + user.getFullName() + ')'}"></strong>?</p>
+            <strong th:if="${userListings > 0}">Note: Deleting your profile will also delete all listings associated with it!</strong>
+            <form method="POST" th:action="@{'/profile/' + ${user.getId()} + '/delete'}" th:object="${user}">
+                <button type="submit" class="btn btn-danger" style="margin-bottom:10px; margin-left:10px; float:right;">Delete</button>
+                <a th:href="@{'/profile/' + ${user.getId()} + '/settings'}" class="btn btn-secondary" style="margin-bottom:10px; float:right;">Cancel</a>
+            </form>
+        </div>
+    </body>
+
+</html>

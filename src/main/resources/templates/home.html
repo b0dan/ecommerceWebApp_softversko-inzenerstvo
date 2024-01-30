@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'Home')}">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body>
+        <nav th:replace="~{fragments/fragment_nav :: navigation}"></nav>
+        <div th:replace="~{fragments/fragment_jumbotron :: jumbotron}"></div>
+
+        <div class="container">
+            <div th:if="${noListings}">
+                <h4>There are no listings.</h4>
+            </div>
+
+            <div class="some-listings" th:if="${!#lists.isEmpty(someListings)}">
+                <div class="row">
+                    <div class="col-6">
+                        <h4 class="mb-3 ms-1"><b>Browse Some Listings:</b></h4>
+                    </div>
+                    <div class="col-6 text-center">
+                        <a class="btn btn-success mb-3 mr-1" href="#carouselExampleIndicators1" role="button" data-bs-slide="prev">
+                            <i class="fa fa-arrow-left"></i>
+                        </a>
+                        <a class="btn btn-success mb-3" href="#carouselExampleIndicators1" role="button" data-bs-slide="next">
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="col-12">
+                        <div id="carouselExampleIndicators1" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <div class="row ms-1">
+                                        <div class="card" style="max-width: 75%;">
+                                            <div class="card-body">
+                                                <h5 class="card-title"><b th:text="${someListings.get(0).getTitle()}"></b></h5>
+                                                <small th:text="${someListings.get(0).getCategory()}"></small>
+                                                <p class="card-text text-truncate" th:text="${someListings.get(0).getDescription()}"></p>
+                                                <p class="card-text"><b>Price: </b><span th:text="${someListings.get(0).getPrice + ' EUR (€)'}"></span></p>
+                                                <div class="d-flex justify-content-between">
+                                                    <small class="text-body-secondary">Created by: <span th:text="${someListings.get(0).getCreatedBy().getUsername()}"></span><span th:if="${someListings.get(0).isShowUserRealName()}" th:text="${' (' + someListings.get(0).getCreatedBy().getFullName() + ')'}"></span> || <span th:text="${someListings.get(0).getCreationDatePrettyTime()}"></span></small>
+
+                                                    <a th:href="@{'/listings/' + ${someListings.get(0).getId()}}" class="btn btn-success" style="float:right;"><i class="fas fa-glasses me-1"></i>View Listing</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <th:block th:with="listSize=${#lists.size(someListings)}">
+                                    <div class="carousel-item" th:if="${#lists.size(someListings) > 1}" th:each="i:${#numbers.sequence(2,listSize)}">
+                                        <div class="row ms-1">
+                                            <div class="card" style="max-width: 75%;">
+                                                <div class="card-body">
+                                                    <h5 class="card-title"><b th:text="${someListings.get(i-1).getTitle()}"></b></h5>
+                                                    <small th:text="${someListings.get(i-1).getCategory()}"></small>
+                                                    <p class="card-text text-truncate" th:text="${someListings.get(i-1).getDescription()}"></p>
+                                                    <p class="card-text"><b>Price: </b><span th:text="${someListings.get(i-1).getPrice + ' EUR (€)'}"></span></p>
+                                                    <div class="d-flex justify-content-between">
+                                                        <small class="text-body-secondary">Created by: <span th:text="${someListings.get(i-1).getCreatedBy().getUsername()}"></span><span th:if="${someListings.get(i-1).isShowUserRealName()}" th:text="${' (' + someListings.get(i-1).getCreatedBy().getFullName() + ')'}"></span> || <span th:text="${someListings.get(i-1).getCreationDatePrettyTime()}"></span></small>
+
+                                                        <a th:href="@{'/listings/' + ${someListings.get(i-1).getId()}}" class="btn btn-success" style="float:right;"><i class="fas fa-glasses me-1"></i>View Listing</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div class="cheapest-listings mt-4" th:if="${!#lists.isEmpty(cheapestListings)}">
+                <div class="row">
+                    <div class="col-6">
+                        <h4 class="mb-3 ms-1"><b>Browse Cheapest Listings:</b></h4>
+                    </div>
+                    <div class="col-6 text-center">
+                        <a class="btn btn-success mb-3 mr-1" href="#carouselExampleIndicators2" role="button" data-bs-slide="prev">
+                            <i class="fa fa-arrow-left"></i>
+                        </a>
+                        <a class="btn btn-success mb-3" href="#carouselExampleIndicators2" role="button" data-bs-slide="next">
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="col-12">
+                        <div id="carouselExampleIndicators2" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <div class="row ms-1">
+                                        <div class="card" style="max-width: 75%;">
+                                            <div class="card-body">
+                                                <h5 class="card-title"><b th:text="${cheapestListings.get(0).getTitle()}"></b></h5>
+                                                <small th:text="${cheapestListings.get(0).getCategory()}"></small>
+                                                <p class="card-text text-truncate" th:text="${cheapestListings.get(0).getDescription()}"></p>
+                                                <p class="card-text"><b>Price: </b><span th:text="${cheapestListings.get(0).getPrice + ' EUR (€)'}"></span></p>
+                                                <div class="d-flex justify-content-between">
+                                                    <small class="text-body-secondary">Created by: <span th:text="${cheapestListings.get(0).getCreatedBy().getUsername()}"></span><span th:if="${cheapestListings.get(0).isShowUserRealName()}" th:text="${' (' + cheapestListings.get(0).getCreatedBy().getFullName() + ')'}"></span> || <span th:text="${cheapestListings.get(0).getCreationDatePrettyTime()}"></span></small>
+
+                                                    <a th:href="@{'/listings/' + ${cheapestListings.get(0).getId()}}" class="btn btn-success" style="float:right;"><i class="fas fa-glasses me-1"></i>View Listing</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <th:block th:with="listSize=${#lists.size(cheapestListings)}">
+                                    <div class="carousel-item" th:if="${#lists.size(cheapestListings) > 1}" th:each="i:${#numbers.sequence(2,listSize)}">
+                                        <div class="row ms-1">
+                                            <div class="card" style="max-width: 75%;">
+                                                <div class="card-body">
+                                                    <h5 class="card-title"><b th:text="${cheapestListings.get(i-1).getTitle()}"></b></h5>
+                                                    <small th:text="${cheapestListings.get(i-1).getCategory()}"></small>
+                                                    <p class="card-text text-truncate" th:text="${cheapestListings.get(i-1).getDescription()}"></p>
+                                                    <p class="card-text"><b>Price: </b><span th:text="${cheapestListings.get(i-1).getPrice + ' EUR (€)'}"></span></p>
+                                                    <div class="d-flex justify-content-between">
+                                                        <small class="text-body-secondary">Created by: <span th:text="${cheapestListings.get(i-1).getCreatedBy().getUsername()}"></span><span th:if="${cheapestListings.get(i-1).isShowUserRealName()}" th:text="${' (' + cheapestListings.get(i-1).getCreatedBy().getFullName() + ')'}"></span> || <span th:text="${cheapestListings.get(i-1).getCreationDatePrettyTime()}"></span></small>
+
+                                                        <a th:href="@{'/listings/' + ${cheapestListings.get(i-1).getId()}}" class="btn btn-success" style="float:right;"><i class="fas fa-glasses me-1"></i>View Listing</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div class="latest-listings mt-4" th:if="${!#lists.isEmpty(latestListings)}">
+                <div class="row">
+                    <div class="col-6">
+                        <h4 class="mb-3 ms-1"><b>Browse Latest Listings:</b></h4>
+                    </div>
+                    <div class="col-6 text-center">
+                        <a class="btn btn-success mb-3 mr-1" href="#carouselExampleIndicators3" role="button" data-bs-slide="prev">
+                            <i class="fa fa-arrow-left"></i>
+                        </a>
+                        <a class="btn btn-success mb-3" href="#carouselExampleIndicators3" role="button" data-bs-slide="next">
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="col-12">
+                        <div id="carouselExampleIndicators3" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <div class="row ms-1">
+                                        <div class="card" style="max-width: 75%;">
+                                            <div class="card-body">
+                                                <h5 class="card-title"><b th:text="${latestListings.get(0).getTitle()}"></b></h5>
+                                                <small th:text="${latestListings.get(0).getCategory()}"></small>
+                                                <p class="card-text text-truncate" th:text="${latestListings.get(0).getDescription()}"></p>
+                                                <p class="card-text"><b>Price: </b><span th:text="${latestListings.get(0).getPrice + ' EUR (€)'}"></span></p>
+                                                <div class="d-flex justify-content-between">
+                                                    <small class="text-body-secondary">Created by: <span th:text="${latestListings.get(0).getCreatedBy().getUsername()}"></span><span th:if="${latestListings.get(0).isShowUserRealName()}" th:text="${' (' + latestListings.get(0).getCreatedBy().getFullName() + ')'}"></span> || <span th:text="${latestListings.get(0).getCreationDatePrettyTime()}"></span></small>
+
+                                                    <a th:href="@{'/listings/' + ${latestListings.get(0).getId()}}" class="btn btn-success" style="float:right;"><i class="fas fa-glasses me-1"></i>View Listing</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <th:block th:with="listSize=${#lists.size(latestListings)}">
+                                    <div class="carousel-item" th:if="${#lists.size(latestListings) > 1}" th:each="i:${#numbers.sequence(2,listSize)}">
+                                        <div class="row ms-1">
+                                            <div class="card" style="max-width: 75%;">
+                                                <div class="card-body">
+                                                    <h5 class="card-title"><b th:text="${latestListings.get(i-1).getTitle()}"></b></h5>
+                                                    <small th:text="${latestListings.get(i-1).getCategory()}"></small>
+                                                    <p class="card-text text-truncate" th:text="${latestListings.get(i-1).getDescription()}"></p>
+                                                    <p class="card-text"><b>Price: </b><span th:text="${latestListings.get(i-1).getPrice + ' EUR (€)'}"></span></p>
+                                                    <div class="d-flex justify-content-between">
+                                                        <small class="text-body-secondary">Created by: <span th:text="${latestListings.get(i-1).getCreatedBy().getUsername()}"></span><span th:if="${latestListings.get(i-1).isShowUserRealName()}" th:text="${' (' + latestListings.get(i-1).getCreatedBy().getFullName() + ')'}"></span> || <span th:text="${latestListings.get(i-1).getCreationDatePrettyTime()}"></span></small>
+
+                                                        <a th:href="@{'/listings/' + ${latestListings.get(i-1).getId()}}" class="btn btn-success" style="float:right;"><i class="fas fa-glasses me-1"></i>View Listing</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+
+            <div class="category-listings mt-4" th:if="${!#lists.isEmpty(categoryListings)}">
+                <div class="row">
+                    <div class="col-6">
+                        <h4 class="mb-3 ms-1"><b><span th:text="${categoryListings.get(0).getCategory()}"></span> Listings:</b></h4>
+                    </div>
+                    <div class="col-6 text-center">
+                        <a class="btn btn-success mb-3 mr-1" href="#carouselExampleIndicators4" role="button" data-bs-slide="prev">
+                            <i class="fa fa-arrow-left"></i>
+                        </a>
+                        <a class="btn btn-success mb-3" href="#carouselExampleIndicators4" role="button" data-bs-slide="next">
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="col-12">
+                        <div id="carouselExampleIndicators4" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <div class="row ms-1">
+                                        <div class="card" style="max-width: 75%;">
+                                            <div class="card-body">
+                                                <h5 class="card-title"><b th:text="${categoryListings.get(0).getTitle()}"></b></h5>
+                                                <small th:text="${categoryListings.get(0).getCategory()}"></small>
+                                                <p class="card-text text-truncate" th:text="${categoryListings.get(0).getDescription()}"></p>
+                                                <p class="card-text"><b>Price: </b><span th:text="${categoryListings.get(0).getPrice + ' EUR (€)'}"></span></p>
+                                                <div class="d-flex justify-content-between">
+                                                    <small class="text-body-secondary">Created by: <span th:text="${categoryListings.get(0).getCreatedBy().getUsername()}"></span><span th:if="${categoryListings.get(0).isShowUserRealName()}" th:text="${' (' + categoryListings.get(0).getCreatedBy().getFullName() + ')'}"></span> || <span th:text="${categoryListings.get(0).getCreationDatePrettyTime()}"></span></small>
+
+                                                    <a th:href="@{'/listings/' + ${categoryListings.get(0).getId()}}" class="btn btn-success" style="float:right;"><i class="fas fa-glasses me-1"></i>View Listing</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <th:block th:with="listSize=${#lists.size(categoryListings)}">
+                                    <div class="carousel-item" th:if="${#lists.size(categoryListings) > 1}" th:each="i:${#numbers.sequence(2,listSize)}">
+                                        <div class="row ms-1">
+                                            <div class="card" style="max-width: 75%;">
+                                                <div class="card-body">
+                                                    <h5 class="card-title"><b th:text="${categoryListings.get(i-1).getTitle()}"></b></h5>
+                                                    <small th:text="${categoryListings.get(i-1).getCategory()}"></small>
+                                                    <p class="card-text text-truncate" th:text="${categoryListings.get(i-1).getDescription()}"></p>
+                                                    <p class="card-text"><b>Price: </b><span th:text="${categoryListings.get(i-1).getPrice + ' EUR (€)'}"></span></p>
+                                                    <div class="d-flex justify-content-between">
+                                                        <small class="text-body-secondary">Created by: <span th:text="${categoryListings.get(i-1).getCreatedBy().getUsername()}"></span><span th:if="${categoryListings.get(i-1).isShowUserRealName()}" th:text="${' (' + categoryListings.get(i-1).getCreatedBy().getFullName() + ')'}"></span> || <span th:text="${categoryListings.get(i-1).getCreationDatePrettyTime()}"></span></small>
+
+                                                        <a th:href="@{'/listings/' + ${categoryListings.get(i-1).getId()}}" class="btn btn-success" style="float:right;"><i class="fas fa-glasses me-1"></i>View Listing</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+        </div>
+    </body>
+
+</html>

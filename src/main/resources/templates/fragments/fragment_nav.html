@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'E-Commerce')}">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-spring fixed-top" th:fragment="navigation">
+            <div class="container">
+                <a class="navbar-brand" href="/home"><i class="fas fa-shopping-bag me-1"></i>E-Commerce</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/home"><i class="fas fa-home me-1"></i>Home</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/listings/browse"><i class="fas fa-search-dollar me-1"></i>Browse</a>
+                        </li>
+
+                        <li class="nav-item" sec:authorize="!isAuthenticated()">
+                            <a class="nav-link active" href="/login"><i class="fa fa-sign-in-alt me-1"></i>Log In</a>
+                        </li>
+
+                        <li class="nav-item" sec:authorize="!isAuthenticated()">
+                            <a class="nav-link active" href="/register"><i class="fa fa-user-plus me-1"></i>Register</a>
+                        </li>
+
+                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                            <a class="nav-link active" th:href="@{${'/profile/' + loggedInUser.getId()}}" data-bs-toggle="tooltip" data-bs-placement="bottom" th:data-bs-title="${'Balance: ' + loggedInUser.getBalance() + ' EUR (€)'}"><i class="fas fa-user-circle me-1"></i>Profile</a>
+                        </li>
+
+                        <li class="nav-item" sec:authorize="isAuthenticated()">
+                            <a class="nav-link active" href="/logout"><i class="fa fa-sign-out-alt me-1"></i>Log Out</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </body>
+
+</html>

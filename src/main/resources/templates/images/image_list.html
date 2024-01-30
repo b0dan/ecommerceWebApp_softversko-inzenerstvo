@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'View Images')}" sec:authorize="isAuthenticated()">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body sec:authorize="isAuthenticated()">
+        <nav th:replace="~{fragments/fragment_nav :: navigation}"></nav>
+        <div th:replace="~{fragments/fragment_jumbotron :: jumbotron}"></div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-mb-12">
+                    <nav>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a th:href="@{'/listings/browse?category=' + ${listing.getCategory()}}" th:text="${listing.getCategory()}" style="color: green;"></a></li>
+                            <li class="breadcrumb-item"><a th:href="@{'/listings/' + ${listing.getId()}}" th:text="${listing.getTitle()}" style="color: green;"></a></li>
+                            <li class="breadcrumb-item active">Images</li>
+                        </ol>
+                    </nav>
+
+                    <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${imageDeleted}">
+                        <span>Image successfully deleted!</span>
+                        <button type="button" class="btn-close focus-ring focus-ring-success" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${imageNotDeleted}">
+                        <span>Image can not be deleted!</span>
+                        <button type="button" class="btn-close focus-ring focus-ring-danger" data-bs-dismiss="alert"></button>
+                    </div>
+                    <br>
+
+                    <div class="row">
+                        <div align="center" th:each="image : ${listing.getImages()}">
+                            <div class="col" style="margin-bottom: 25px;">
+                                <div class="card mb-3" style="width: 50rem;">
+                                    <a target="_blank" th:href="@{${'/api/images/view/' + image.getImageName()}}">
+                                        <img class="card-img-top" th:src="@{${'/api/images/view/' + image.getImageName()}}"/>
+                                    </a>
+                                    <div class="card-body">
+                                        <h5 class="card-title" th:text="${image.getImageName()}"></h5>
+                                        <br>
+                                        <div>
+                                            <h6 align="left" class="card-subtitle mb-2">Image for the <b th:text="${listing.getTitle()}"></b> listing.</h6>
+                                            <h6 align="left" class="card-subtitle mb-2 text-muted" th:text="|Added on: ${image.getCreationDatePrettyTime()}|"></h6>
+                                        </div>
+
+                                        <a th:href="@{'/listings/' + ${listing.getId()} + '/images/delete/' + ${image.getId()}}" class="btn btn-danger" style="margin-bottom:10px; float:right;"><i class="fa fa-trash me-1"></i>Delete</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+</html>

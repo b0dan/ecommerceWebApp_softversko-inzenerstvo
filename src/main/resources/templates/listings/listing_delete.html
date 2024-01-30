@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'Delete Listing')}" sec:authorize="isAuthenticated()">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body sec:authorize="isAuthenticated()">
+        <nav th:replace="~{fragments/fragment_nav :: navigation}"></nav>
+        <div th:replace="~{fragments/fragment_jumbotron :: jumbotron}"></div>
+
+        <div class="container">
+            <h4><b>Delete Listing</b></h4>
+            <br>
+            <p>Are you sure you want to delete the following listing: <strong th:text="${listing.getTitle()}"></strong>?</p>
+            <form method="POST" th:action="@{'/listings/delete/' + ${listing.getId()}}" th:object="${listing}">
+                <button type="submit" class="btn btn-danger" style="margin-bottom:10px; margin-left:10px; float:right;">Delete</button>
+                <a th:href="@{'/listings/' + ${listing.getId()}}" class="btn btn-secondary" style="margin-bottom:10px; float:right;">Cancel</a>
+            </form>
+        </div>
+    </body>
+
+</html>

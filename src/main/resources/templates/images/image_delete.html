@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'Delete Image')}" sec:authorize="isAuthenticated()">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body sec:authorize="isAuthenticated()">
+        <nav th:replace="~{fragments/fragment_nav :: navigation}"></nav>
+        <div th:replace="~{fragments/fragment_jumbotron :: jumbotron}"></div>
+
+        <div class="container">
+            <h4><b>Delete Image</b></h4>
+            <br>
+            <p>Are you sure you want to delete the following image: <strong th:text="${image.getImageName()}"></strong>?</p>
+            <p>Listing: <b th:text="${image.getListing().getTitle()}"></b>.</p>
+            <br>
+            <a target="_blank" th:href="@{${'/api/images/view/' + image.getImageName()}}">
+                <img class="img-thumbnail w-75 mx-auto d-block" align="center" th:src="@{${'/api/images/view/' + image.getImageName()}}"/>
+            </a>
+            <form method="POST" th:action="@{'/listings/' + ${image.getListing().getId()} + '/images/delete/' + ${image.getId()}}" th:object="${image}">
+                <div style="margin-top:40px;">
+                    <button type="submit" class="btn btn-danger me-1" style="margin-bottom:10px; margin-left:10px; float:right;">Delete</button>
+                    <a th:href="@{'/listings/' + ${image.getListing().getId} + '/images'}" class="btn btn-secondary me-1" style="margin-bottom:10px; float:right;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </body>
+
+</html>

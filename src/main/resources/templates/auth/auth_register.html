@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'Register')}" sec:authorize="!isAuthenticated()">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body sec:authorize="!isAuthenticated()">
+        <nav th:replace="~{fragments/fragment_nav :: navigation}"></nav>
+        <div th:replace="~{fragments/fragment_jumbotron :: jumbotron}"></div>
+
+        <div class="container">
+            <div class="row" th:if="${success}">
+                <div class="col-mb-3"></div>
+                <div class="col-mb-3"></div>
+            </div>
+
+            <form class="form-horizontal" method="POST" th:action="@{/register}" th:object="${user}" th:if="!${success}">
+                <div class="row">
+                    <div class="col-mb-3"></div>
+                    <div class="col-mb-6">
+                        <h3><b>Register New User</b></h3>
+                        <hr>
+                    </div>
+                </div>
+
+                <div th:each="error : ${errors}" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${!#lists.isEmpty(errors)}">
+                    <span th:text="${error.getDefaultMessage()}"></span>
+                    <button type="button" class="btn-close focus-ring focus-ring-danger" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${emailExists}">
+                    <span>There is already an account with that E-Mail!</span>
+                    <button type="button" class="btn-close focus-ring focus-ring-warning" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${usernameExists}">
+                    <span>There is already an account with that username!</span>
+                    <button type="button" class="btn-close focus-ring focus-ring-warning" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${shortPassword}">
+                    <span>The password is too short! A minimum of 8 characters is required.</span>
+                    <button type="button" class="btn-close focus-ring focus-ring-warning" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${passwordsNoMatch}">
+                    <span>Password & Password Confirmation do not match!</span>
+                    <button type="button" class="btn-close focus-ring focus-ring-warning" data-bs-dismiss="alert"></button>
+                </div>
+
+                <div class="row">
+                    <div class="col-mb-3"></div>
+                    <div class="col-mb-6">
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control focus-ring focus-ring-success" id="floatingInput1" placeholder="you@mail.com" th:field="*{email}" autofocus required/>
+                            <label for="floatingInput1"><b>E-Mail:</b></label>
+                        </div>
+                    </div>
+                    <div class="col-mb-3"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-mb-3"></div>
+                    <div class="col-mb-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control focus-ring focus-ring-success" id="floatingInput2" placeholder="Username" th:field="*{username}" required/>
+                            <label for="floatingInput2"><b>Username:</b></label>
+                        </div>
+                    </div>
+                    <div class="col-mb-3"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-mb-3"></div>
+                    <div class="col-mb-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control focus-ring focus-ring-success" id="floatingInput3" placeholder="Full Name" th:field="*{fullName}" required/>
+                            <label for="floatingInput3"><b>Full Name:</b></label>
+                        </div>
+                    </div>
+                    <div class="col-mb-3"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-mb-3"></div>
+                    <div class="col-mb-6">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control focus-ring focus-ring-success" id="floatingInput4" placeholder="Location" th:field="*{location}" required/>
+                            <label for="floatingInput4"><b>Location:</b></label>
+                        </div>
+                    </div>
+                    <div class="col-mb-3"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-mb-3"></div>
+                    <div class="col-mb-6">
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control focus-ring focus-ring-success" id="floatingPassword" placeholder="Password" th:field="*{password}" required/>
+                            <label for="floatingPassword"><b>Password:</b></label>
+                        </div>
+                    </div>
+                    <div class="col-mb-3"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-mb-3"></div>
+                    <div class="col-mb-6">
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control focus-ring focus-ring-success" id="floatingConfirmPassword" placeholder="Confirm Password" th:field="*{confirmPassword}" required/>
+                            <label for="floatingConfirmPassword"><b>Confirm Password:</b></label>
+                        </div>
+                    </div>
+                    <div class="col-mb-3"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-mb-3"></div>
+                    <div class="col-mb-6">
+                        <a href="/home" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-success ms-1"><i class="fa fa-user-plus me-1"></i>Register</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </body>
+
+</html>

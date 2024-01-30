@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'Create Listing')}" sec:authorize="isAuthenticated()">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body sec:authorize="isAuthenticated()">
+        <nav th:replace="~{fragments/fragment_nav :: navigation}"></nav>
+        <div th:replace="~{fragments/fragment_jumbotron :: jumbotron}"></div>
+
+        <div class="container">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${notSaved}">
+                <span>Listing can not be saved!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-danger" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:each="error : ${errors}" class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${!#lists.isEmpty(errors)}">
+                <span th:text="${error.getDefaultMessage()}"></span>
+                <button type="button" class="btn-close focus-ring focus-ring-danger" data-bs-dismiss="alert"></button>
+            </div>
+
+            <h4><b>Create Listing</b></h4>
+            <br>
+            <form method="POST" enctype="multipart/form-data" th:action="@{/listings/submit}" th:object="${listing}">
+                <div class="form-group">
+                    <label for="title"><b>Title:</b></label>
+                    <input type="text" class="form-control focus-ring focus-ring-success" id="title" placeholder="What are you selling?" th:field="*{title}" autofocus required/>
+
+                    <br>
+                    <label for="category"><b>Category:</b></label>
+                    <select class="form-select focus-ring focus-ring-success" id="category" name="category" required>
+                        <option value="" selected disabled></option>
+                        <option value="Electronics & Gadgets">Electronics & Gadgets</option>
+                        <option value="Fashion & Accessories">Fashion & Accessories</option>
+                        <option value="Home & Garden">Home & Garden</option>
+                        <option value="Collectibles & Antiques">Collectibles & Antiques</option>
+                        <option value="Toys & Games">Toys & Games</option>
+                    </select>
+
+                    <br>
+                    <label for="description"><b>Description:</b></label>
+                    <textarea class="form-control focus-ring focus-ring-success" id="description" placeholder="..." th:field="*{description}" required></textarea>
+
+                    <br>
+                    <label for="uploadedImages" class="form-label"><b>Image(s):</b></label>
+                    <div class="input-group">
+                        <input type="file" class="form-control focus-ring focus-ring-success" id="uploadedImages" name="uploadedImages" accept="image/*" multiple/>
+                        <button class="btn btn-light border rounded-end" type="button" onclick="clearFileInput()">X</button>
+                    </div>
+                    <small class="text-body-secondary">The firstly selected image will be put as the main background image for your listing!</small>
+
+                    <br><br>
+                    <label for="price"><b>Price:</b></label>
+                    <div class="input-group">
+                        <input type="text" class="form-control focus-ring focus-ring-success" id="price" oninput="validatePriceInput(this, 'price')" th:field="*{price}" required/>
+                        <span class="input-group-text">EUR (€)</span>
+                    </div>
+
+                    <br>
+                    <label for="title"><b>Location:</b></label>
+                    <input type="text" class="form-control focus-ring focus-ring-success" id="location" name="location" th:value="${currentUser.getLocation()}" required/>
+
+                    <br><hr>
+                    <h5><b>Contact Info <i>(optional)</i></b></h5>
+
+                    <br>
+                    <div class="form-check">
+                        <input class="form-check-input focus-ring focus-ring-success" type="checkbox" name="showName" value="showName" id="flexCheckDefault" th:checked="${currentUser.isShowUserRealName()}"/>
+                        <label class="form-check-label focus-ring focus-ring-success" for="flexCheckDefault">Display Real Name</label>
+                    </div>
+
+                    <br>
+                    <div class="form-check">
+                        <input class="form-check-input focus-ring focus-ring-success" type="checkbox" name="showUsername" value="showUsername" id="flexCheckCheckedDisabled" checked disabled/>
+                        <label class="form-check-label focus-ring focus-ring-success" for="flexCheckCheckedDisabled">Display Username</label>
+                    </div>
+
+                    <br>
+                    <div class="input-group mb-3">
+                        <div class="input-group-text">
+                            <input class="form-check-input mt-0 focus-ring focus-ring-success" type="checkbox" name="showEmail" value="showEmail">
+                        </div>
+                        <div class="form-floating">
+                            <input type="email" class="form-control focus-ring focus-ring-success" id="email" name="email" th:value="${currentUser.getEmail()}"/>
+                            <label for="email"><b>E-Mail:</b></label>
+                        </div>
+                    </div>
+
+                    <br>
+                       <div id="phoneDiv" class="input-group mb-3">
+                           <div class="input-group-text">
+                               <input class="form-check-input mt-0 focus-ring focus-ring-success" type="checkbox" name="showPhone" value="showPhone">
+                           </div>
+                           <div class="form-floating">
+                               <input type="text" class="form-control focus-ring focus-ring-success" id="phone" oninput="validatePhoneInput(this, 'phoneDiv')" th:field="*{phone}"/>
+                               <label for="phone"><b>Phone Number:</b></label>
+                           </div>
+                       </div>
+                </div>
+
+                <br>
+                <button type="submit" class="btn btn-success" style="margin-bottom:10px; margin-left:10px; float:right;">Create</button>
+                <a href="/listings/browse" class="btn btn-secondary" style="margin-bottom:10px; float:right;">Cancel</a>
+            </form>
+        </div>
+    </body>
+
+</html>

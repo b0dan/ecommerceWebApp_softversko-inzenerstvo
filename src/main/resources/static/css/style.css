@@ -1,0 +1,152 @@
+.bg-spring {
+    background-color: #208656 !important;
+}
+
+.bg-spring22 {
+    background-color: #2E2A28 !important;
+}
+
+nav.nav-item {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    padding-right: 10px;
+}
+
+button.nav-link {
+    background: #208656;
+    border: none;
+    cursor: pointer;
+}
+
+body {
+    background: #FFFFFF;
+    font-family: 'Roboto', sans-serif;
+}
+
+.jumbotron {
+    background: #FFFFFF;
+    color: #FFFFFF;
+}
+
+.jumbotron {
+    padding: 20px;
+    padding-bottom: 40px;
+}
+
+.jumpbotron h2 {
+    font-family: 'Oswald', sans-serif;
+}
+
+.jumbotron a, .jumbotron a: visited {
+    color: #FFFFFF
+}
+
+.jumbotron p {
+    font-size: 15px;
+}
+
+.position {
+    color: darkgray;
+}
+
+.votecount {
+    color: darkgray;
+    clear: both;
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+.upvote {
+    vertical-align: top;
+}
+
+.downvote {
+    vertical-align: bottom;
+}
+
+a.upvote , a.downvote {
+    color: darkgrey;
+}
+
+.title {
+    margin: 0px;
+}
+
+.tagline {
+    font-size: 14px;
+}
+
+a.comments {
+    color: #000000
+}
+
+a.share {
+    padding-left: 10px;
+    color: #000000
+}
+
+.domain {
+    color: darkgrey;
+    font-size: 13px;
+    padding-left: 10px;
+}
+.domain a, .domain a: hover, .domain a: visited {
+    color: darkgrey;
+}
+
+.comments.title {
+    border-bottom: 1px dotted #000000;
+    margin-bottom: 20px;
+}
+
+.addcomment {
+    margin-bottom:20px;
+}
+
+.comment {
+    margin-top:20px;
+}
+
+.comment.body {
+    margin: 0 0 5px 0;
+    padding: 0px;
+}
+
+.comment.like {
+    padding-left:10px;
+}
+
+@media(min-width: 768px) {
+    .field-label-responsive {
+        padding-top: .5rem;
+        text-align: right;
+    }
+}
+
+.form-check-input.focus-ring-success:checked {
+    background-color: #208656 !important;
+    border-color: #208656 !important;
+}
+
+.form-check-input.focus-ring-success:focus, .form-control.focus-ring-success:focus, .form-select.focus-ring-success:focus {
+    border-color: #208656 !important;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #EAFAF3 !important;
+}
+
+.carousel-indicators, .carousel-control-next, .carousel-control-prev {
+    filter: invert(100%);
+}
+
+.nav-link.active {
+    background-color: #198754 !important;
+    color: #FFFFFF !important;
+}
+
+.page-link.active {
+    background-color: #198754 !important;
+    color: #FFFFFF !important;
+    border-color: #198754 !important;
+}

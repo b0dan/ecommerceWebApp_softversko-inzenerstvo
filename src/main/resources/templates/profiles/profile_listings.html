@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'Created Listings')}" sec:authorize="isAuthenticated()">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body sec:authorize="isAuthenticated()">
+        <nav th:replace="~{fragments/fragment_nav :: navigation}"></nav>
+        <div th:replace="~{fragments/fragment_jumbotron :: jumbotron}"></div>
+
+        <div class="container">
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a th:href="@{'/profile/' + ${userProfile.getId()}}" style="color:green;"><span th:text="${userProfile.getUsername()}"></span><span th:if="${userProfile.isShowUserRealName()}" th:text="${' (' + userProfile.getFullName() + ')'}"></span></a>
+                    </li>
+                    <li class="breadcrumb-item active">Created Listings</li>
+                </ol>
+            </nav>
+
+            <div class="active-listings">
+                <br>
+                <h3><b>Active Listings: <span th:text="${#lists.size(createdListings_nonPurchased)}"></span></b></h3>
+                <hr>
+                <div th:unless="${!#lists.isEmpty(createdListings_nonPurchased)}">
+                    <h4>You have no active listings.</h4>
+                </div>
+                <div class="row" th:each="listing : ${createdListings_nonPurchased}" th:if="${!#lists.isEmpty(createdListings_nonPurchased)}">
+                    <div class="card col-12 mb-3">
+                        <div class="card-body">
+                            <a th:href="@{'/listings/' + ${listing.getId()}}" style="color: green;">
+                                <h5 class="card-title"><b th:text="${listing.getTitle()}"></b></h5>
+                            </a>
+                            <small th:text="${listing.getCategory()}"></small>
+                            <hr>
+                            <p class="card-text text-truncate" th:text="${listing.getDescription()}"></p>
+                            <p class="card-text"><b>Price: </b><span th:text="${listing.getPrice + ' EUR (€)'}"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="archived-listings">
+                <br><br>
+                <h3><b>Archived Listings: <span th:text="${#lists.size(createdListings_purchased)}"></span></b></h3>
+                <hr>
+                <div th:unless="${!#lists.isEmpty(createdListings_purchased)}">
+                    <h4>You have no archived listings.</h4>
+                </div>
+                <div class="row" th:each="listing : ${createdListings_purchased}" th:if="${!#lists.isEmpty(createdListings_purchased)}">
+                    <div class="card col-12 mb-3">
+                        <div class="card-body">
+                            <a th:href="@{'/listings/' + ${listing.getId()}}" style="color: green;">
+                                <h5 class="card-title"><b th:text="${listing.getTitle()}"></b></h5>
+                            </a>
+                            <small th:text="${listing.getCategory()}"></small>
+                            <hr>
+                            <p class="card-text text-truncate" th:text="${listing.getDescription()}"></p>
+                            <p class="card-text"><b>Price: </b><span th:text="${listing.getPrice + ' EUR (€)'}"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+</html>

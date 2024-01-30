@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'Settings')}" sec:authorize="isAuthenticated()">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body sec:authorize="isAuthenticated()">
+        <nav th:replace="~{fragments/fragment_nav :: navigation}"></nav>
+        <div th:replace="~{fragments/fragment_jumbotron :: jumbotron}"></div>
+
+        <div class="container">
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a th:href="@{'/profile/' + ${userProfile.getId()}}" style="color:green;"><span th:text="${userProfile.getUsername()}"></span><span th:if="${userProfile.isShowUserRealName()}" th:text="${' (' + userProfile.getFullName() + ')'}"></span></a>
+                    </li>
+                    <li class="breadcrumb-item active">Settings</li>
+                </ol>
+            </nav>
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${notDeleted}">
+                <span>Profile can not be deleted!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-danger" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${updated}">
+                <span>Your settings have been successfully saved/updated!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-success" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${passwordError}">
+                <span>Your current password does not match with the "Old Password"!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-warning" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div id="settings" class="row">
+                <h3><b>Settings</b></h3>
+                <div class="col-4">
+                    <nav id="navbar-example3" class="h-100 flex-column align-items-stretch pe-4 border-end">
+                        <nav class="nav nav-pills flex-column">
+                            <a class="nav-link active" data-bs-toggle="collapse" href="#info" role="button" style="color:#198754;" onclick="toggleActive(this)">Personal Info</a>
+                            <a class="nav-link" data-bs-toggle="collapse" href="#details" role="button" style="color:#198754;" onclick="toggleActive(this)">Account Details</a>
+                            <a class="nav-link" data-bs-toggle="collapse" href="#security" role="button" style="color:#198754;" onclick="toggleActive(this)">Security</a>
+                            <hr>
+                            <a class="nav-link" th:href="@{'/profile/' + ${userProfile.getId()} + '/balance'}" style="color:#198754;">Balance & Balance History</a>
+                            <a class="nav-link" th:href="@{'/profile/' + ${userProfile.getId()} + '/purchased'}" style="color:#198754;">Purchase History</a>
+                            <a class="nav-link" th:href="@{'/profile/' + ${userProfile.getId()} + '/listings'}" style="color:#198754;">Created Listings</a>
+                            <hr>
+                            <a th:href="@{'/profile/' + ${userProfile.getId()} + '/delete'}" class="btn btn-danger"><i class="fa fa-trash me-1"></i>Delete Profile</a>
+                        </nav>
+                    </nav>
+                </div>
+
+                <div class="col-8">
+                    <div data-bs-spy="scroll" data-bs-target="#navbar-example3" data-bs-smooth-scroll="true" class="scrollspy-example-2" tabindex="0">
+                        <div class="collapse show" id="info" data-bs-parent="#settings">
+                            <h4 class="mt-2"><b>Personal Info</b></h4>
+                            <br>
+                            <form method="POST" th:action="@{'/profile/' + ${userProfile.getId()} + '/settings'}" th:object="${userProfile}">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control focus-ring focus-ring-success" id="realName" name="realName" placeholder="Change Name" th:value="${userProfile.getFullName()}" required/>
+                                    <label for="realName"><b>Change Real Name:</b></label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input focus-ring focus-ring-success" type="checkbox" name="showName" value="showName" id="flexCheckDefault" th:checked="${userProfile.isShowUserRealName()}"/>
+                                    <label class="form-check-label focus-ring focus-ring-success" for="flexCheckDefault">Display Real Name</label>
+                                </div>
+                                <br>
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control focus-ring focus-ring-success" id="location" name="location" placeholder="Change Location" th:value="${userProfile.getLocation()}" required/>
+                                    <label for="location"><b>Change Location:</b></label>
+                                </div>
+                                <br>
+                                <button type="submit" class="btn btn-success" style="float:right;"><i class="fa fa-save me-1"></i>Save</button>
+                            </form>
+                        </div>
+                        <div class="collapse" id="details" data-bs-parent="#settings">
+                            <h4 class="mt-2"><b>Account Details</b></h4>
+                            <br>
+                            <form method="POST" th:action="@{'/profile/' + ${userProfile.getId()} + '/settings'}" th:object="${userProfile}">
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control focus-ring focus-ring-success" id="username" name="username" placeholder="Change Username" th:value="${userProfile.getUsername()}" required/>
+                                    <label for="username"><b>Change Username:</b></label>
+                                </div>
+                                <br>
+                                <div class="form-floating mb-3">
+                                    <input type="email" class="form-control focus-ring focus-ring-success" id="email" name="email" placeholder="Change E-Mail" th:value="${userProfile.getEmail()}" required/>
+                                    <label for="email"><b>Change E-Mail:</b></label>
+                                </div>
+                                <br>
+                                <button type="submit" class="btn btn-success" style="float:right;"><i class="fa fa-save me-1"></i>Save</button>
+                            </form>
+                        </div>
+                        <div class="collapse" id="security" data-bs-parent="#settings">
+                            <h4 class="mt-2"><b>Security</b></h4>
+                            <br>
+                            <form method="POST" th:action="@{'/profile/' + ${userProfile.getId()} + '/settings'}" th:object="${userProfile}">
+                                <div class="form-floating mb-3">
+                                    <input type="password" class="form-control focus-ring focus-ring-success" id="oldPassword" name="oldPassword" placeholder="Old Password" required/>
+                                    <label for="oldPassword"><b>Old Password:</b></label>
+                                </div>
+                                <br>
+                                <div class="form-floating mb-3">
+                                    <input type="password" class="form-control focus-ring focus-ring-success" id="newPassword" name="newPassword" placeholder="New Password" required/>
+                                    <label for="newPassword"><b>New Password:</b></label>
+                                </div>
+                                <br>
+                                <button type="submit" class="btn btn-success" style="float:right;"><i class="fa fa-save me-1"></i>Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+</html>

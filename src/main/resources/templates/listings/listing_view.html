@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'Listing')}">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body>
+        <nav th:replace="~{fragments/fragment_nav :: navigation}"></nav>
+        <div th:replace="~{fragments/fragment_jumbotron :: jumbotron}"></div>
+
+        <div class="container">
+            <nav>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="${'/listings/browse?category=' + listing.getCategory()}" th:text="${listing.getCategory()}" style="color: green;"></a></li>
+                    <li class="breadcrumb-item active" th:text="${listing.getTitle()}"></li>
+                </ol>
+            </nav>
+
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${success}">
+                <span>Listing successfully created!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-success" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${notSaved}">
+                <span>Listing can not be saved!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-danger" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${updated}">
+                <span>Listing successfully edited!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-success" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${notDeleted}">
+                <span>Listing can not be deleted!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-danger" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${imageDeleted}">
+                <span>Image successfully deleted!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-success" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${sameUser}">
+                <span>You can not purchase your own listing!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-danger" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${lowBalance}">
+                <span>You do not have enough balance to purchase the listing!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-warning" data-bs-dismiss="alert"></button>
+            </div>
+
+            <br>
+            <h3><b th:text="${listing.getTitle()}"></b></h3>
+            <small class="text-body-secondary">Created by: <a th:href="${'/profile/' + listing.getCreatedBy().getId()}" style="color: green;"><span th:text="${listing.getCreatedBy().getUsername()}"></span><span th:if="${listing.isShowUserRealName()}" th:text="${' (' + listing.getCreatedBy().getFullName() + ')'}"></span></a> || <span th:text="${listing.getCreationDatePrettyTime()}"></span></small>
+            <br>
+            <small class="text-body-secondary" th:if="${listing.getLastModifiedPrettyTime() != null}">Last modified on: <span th:text="${listing.getLastModifiedPrettyTime()}"></span></small>
+
+            <br><hr><br>
+            <h4><b>Description:</b></h4>
+            <p th:text="${listing.getDescription()}" style="white-space:pre-wrap; word-wrap:break-word; width:100%;"></p>
+
+            <br>
+            <h4 th:if="${!#lists.isEmpty(listing.getImages())}"><b>Images:</b></h4>
+            <div id="carouselExampleIndicators" class="carousel slide w-75" th:if="${!#lists.isEmpty(listing.getImages())}">
+                <div class="carousel-indicators">
+                    <button th:each="image, i : ${listing.getImages()}" type="button" data-bs-target="#carouselExampleIndicators" th:data-bs-slide-to="${i.index}" class="active"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <a target="_blank" th:href="@{${'/api/images/view/' + listing.getImages().get(0).getImageName()}}">
+                            <img class="d-block w-100 border border-dark" th:src="@{${'/api/images/view/' + listing.getImages().get(0).getImageName()}}"/>
+                        </a>
+                    </div>
+                    <th:block th:with="listSize=${#lists.size(listing.getImages())}">
+                        <div class="carousel-item" th:if="${#lists.size(listing.getImages()) > 1}" th:each="i:${#numbers.sequence(2,listSize)}">
+                            <a target="_blank" th:href="@{${'/api/images/view/' + listing.getImages().get(i-1).getImageName()}}">
+                                <img class="d-block w-100 border border-dark" th:src="@{${'/api/images/view/' + listing.getImages().get(i-1).getImageName()}}"/>
+                            </a>
+                        </div>
+                    </th:block>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+            <div th:if="${userCanModify == true && !#lists.isEmpty(listing.getImages())}">
+                <small><a th:href="@{'/listings/' + ${listing.getId()} + '/images'}" style="color:green;" sec:authorize="isAuthenticated()">Click here to delete images.</a></small>
+            </div>
+
+            <br th:if="${!#lists.isEmpty(listing.getImages())}">
+            <h4><b>Price:</b></h4>
+            <p th:text="${listing.getPrice() + ' EUR (€)'}"></p>
+
+            <br>
+            <h4><b>Location:</b></h4>
+            <p th:text="${listing.getLocation()}"></p>
+
+            <div th:if="${!#strings.isEmpty(listing.getPhone()) || !#strings.isEmpty(listing.getEmail())}">
+                <br>
+                <h4><b>Contact:</b></h4>
+                <div class="accordion" id="accordionPanelsStayOpen">
+                    <div class="accordion-item" th:if="${!#strings.isEmpty(listing.getEmail())}">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed focus-ring focus-ring-success" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne"><b>E-Mail</b></button>
+                        </h2>
+                        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <span th:text="${listing.getEmail()}"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item" th:if="${!#strings.isEmpty(listing.getPhone())}">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed focus-ring focus-ring-success" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo"><b>Phone</b></button>
+                        </h2>
+                        <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <span th:text="${listing.getPhone()}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mt-4" th:if="${!listing.isPurchased()}">
+                <div class="d-flex justify-content-start">
+                    <a th:href="@{'/listings/edit/' + ${listing.getId()}}" class="btn btn-primary" style="margin-bottom:10px; float:right;" sec:authorize="isAuthenticated()" th:if="${userCanModify}"><i class="fas fa-edit me-1"></i>Edit</a>
+                    <a th:href="@{'/listings/delete/' + ${listing.getId()}}" class="btn btn-danger" style="margin-bottom:10px; margin-left:10px; float:right;" sec:authorize="isAuthenticated()" th:if="${userCanModify}"><i class="fa fa-trash me-1"></i>Delete</a>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <a href="/listings/browse" class="btn btn-secondary" style="margin-bottom:10px; float:right;" th:unless="${userCanModify}">Cancel</a>
+                    <a th:href="@{'/listings/purchase/' + ${listing.getId()}}" class="btn btn-success" style="margin-bottom:10px; margin-left:10px; float:right;" th:unless="${userCanModify}"><i class="fas fa-money-check-alt me-1"></i>Purchase</a>
+                </div>
+            </div>
+            <div th:if="${listing.isPurchased()}">
+                <br>
+                <p class="text-muted text-end">Listing has been purchased by <span th:text="${listing.getPurchasedBy().getUsername()}"></span>.</p>
+            </div>
+        </div>
+    </body>
+
+</html>

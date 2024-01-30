@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+
+    <head th:replace="~{layouts/layout_main :: head(title = 'Browse Listings')}">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    </head>
+
+    <body>
+        <nav th:replace="~{fragments/fragment_nav :: navigation}"></nav>
+        <div th:replace="~{fragments/fragment_jumbotron :: jumbotron}"></div>
+
+        <div class="container">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${sortingError}">
+                <span>Can not sort by "<span th:text="${sortingArgument}"></span>"!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-danger" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${deleted}">
+                <span>Listing successfully deleted!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-success" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${purchased}">
+                <span>Listing successfully purchased!</span>
+                <button type="button" class="btn-close focus-ring focus-ring-success" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="row">
+                <div class="col-md-8 me-5">
+                    <div th:unless="${!#lists.isEmpty(listings)}">
+                        <h4>There are no listings.</h4>
+                    </div>
+
+                    <div class="row" th:each="listing : ${pageList}" th:if="${!#lists.isEmpty(pageList)}">
+                        <div class="card mb-4" th:unless="${!#lists.isEmpty(listing.getImages())}">
+                            <div class="card-body">
+                                <h5 class="card-title"><b th:text="${listing.getTitle()}"></b></h5>
+                                <small th:text="${listing.getCategory()}"></small>
+                                <hr>
+                                <p class="card-text text-truncate" th:text="${listing.getDescription()}"></p>
+                                <p class="card-text"><b>Price: </b><span th:text="${listing.getPrice + ' EUR (€)'}"></span></p>
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-body-secondary">Created by: <a th:href="${'/profile/' + listing.getCreatedBy().getId()}" style="color: green;"><span th:text="${listing.getCreatedBy().getUsername()}"></span><span th:if="${listing.isShowUserRealName()}" th:text="${' (' + listing.getCreatedBy().getFullName() + ')'}"></span></a> || <span th:text="${listing.getCreationDatePrettyTime()}"></span></small>
+
+                                    <a th:href="@{'/listings/' + ${listing.getId()}}" class="btn btn-success" style="float:right;"><i class="fas fa-glasses me-1"></i>View Listing</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mb-4 p-0" th:if="${!#lists.isEmpty(listing.getImages())}">
+                            <a th:href="@{'/listings/' + ${listing.getId()}}"><img th:src="@{${'/api/images/view/' + listing.getImages().get(0).getImageName()}}" th:title="${listing.getTitle()}" class="card-img-top"/></a>
+                            <div class="card-body">
+                                <h5 class="card-title"><b th:text="${listing.getTitle()}"></b></h5>
+                                <small th:text="${listing.getCategory()}"></small>
+                                <hr>
+                                <p class="card-text text-truncate" th:text="${listing.getDescription()}"></p>
+                                <p class="card-text"><b>Price: </b><span th:text="${listing.getPrice + ' EUR (€)'}"></span></p>
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-body-secondary">Created by: <a th:href="${'/profile/' + listing.getCreatedBy().getId()}" style="color: green;"><span th:text="${listing.getCreatedBy().getUsername()}"></span><span th:if="${listing.isShowUserRealName()}" th:text="${' (' + listing.getCreatedBy().getFullName() + ')'}"></span></a> || <span th:text="${listing.getCreationDatePrettyTime()}"></span></small>
+
+                                    <a th:href="@{'/listings/' + ${listing.getId()}}" class="btn btn-success" style="float:right;"><i class="fas fa-glasses me-1"></i>View Listing</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3 ms-5" style="padding-left: 65px;">
+                    <div class="row">
+                        <a th:href="@{'/listings/create'}" class="btn btn-success"><i class="fas fa-cart-plus me-1"></i>Create Listing</a>
+                        <br>
+                        <div class="card mt-4">
+                            <br>
+                            <h5 align="center"><b>Filters</b></h5>
+                            <hr>
+                            <form method="GET" th:action="@{/listings/browse}" class="input-group">
+                                <input type="search" id="form1" name="search" class="form-control focus-ring focus-ring-success" placeholder="Search Listing" required/>
+                                <button type="submit" class="btn btn-success"><i class="fas fa-search"></i></button>
+                            </form>
+
+                            <br>
+                            <div class="d-flex justify-content-between">
+                                <div class="dropdown">
+                                    <a class="btn btn-success dropdown-toggle" role="button" data-bs-toggle="dropdown" th:text="${sorted}">Sort By</a>
+
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" onclick="updateURL('latest')">Latest First</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="updateURL('oldest')">Oldest First</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="updateURL('lowest')">Lowest Price</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="updateURL('highest')">Highest Price</a></li>
+                                    </ul>
+                                </div>
+
+                                <a href="/listings/browse" class="btn btn-success">Clear Filters</a>
+                            </div>
+
+                            <br>
+                            <div class="btn-group-vertical" role="group">
+                                <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio1" autocomplete="off" data-url="/listings/browse?category=Electronics %26 Gadgets" onclick="filterByCategory()" th:checked="${selectedCategory == 'Electronics & Gadgets'}"/>
+                                <label class="btn btn-outline-success" for="vbtn-radio1">Electronics & Gadgets</label>
+                                <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio2" autocomplete="off" data-url="/listings/browse?category=Fashion %26 Accessories" onclick="filterByCategory()" th:checked="${selectedCategory == 'Fashion & Accessories'}"/>
+                                <label class="btn btn-outline-success" for="vbtn-radio2">Fashion & Accessories</label>
+                                <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio3" autocomplete="off" data-url="/listings/browse?category=Home %26 Garden" onclick="filterByCategory()" th:checked="${selectedCategory == 'Home & Garden'}"/>
+                                <label class="btn btn-outline-success" for="vbtn-radio3">Home & Garden</label>
+                                <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio4" autocomplete="off" data-url="/listings/browse?category=Collectibles %26 Antiques" onclick="filterByCategory()" th:checked="${selectedCategory == 'Collectibles & Antiques'}"/>
+                                <label class="btn btn-outline-success" for="vbtn-radio4">Collectibles & Antiques</label>
+                                <input type="radio" class="btn-check" name="vbtn-radio" id="vbtn-radio5" autocomplete="off" data-url="/listings/browse?category=Toys %26 Games" onclick="filterByCategory()" th:checked="${selectedCategory == 'Toys & Games'}"/>
+                                <label class="btn btn-outline-success" for="vbtn-radio5">Toys & Games</label>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-1" th:if="${#lists.size(listings) > 10}">
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                            <a class="page-link focus-ring focus-ring-success" th:href="@{'/listings/browse' + ${query + (currentPage - 1)}}" style="color:green;">Previous</a>
+                        </li>
+
+                        <li class="page-item" th:each="pageNumber : ${#numbers.sequence(1, totalPages)}">
+                            <a class="page-link focus-ring focus-ring-success" th:href="@{'/listings/browse' + ${query + pageNumber}}" th:classappend="${pageNumber == currentPage ? 'active' : ''}" style="color:green;" th:text="${pageNumber}"></a>
+                        </li>
+
+                        <li class="page-item" th:classappend="${currentPage == totalPages ? 'disabled' : ''}">
+                            <a class="page-link focus-ring focus-ring-success" th:href="@{'/listings/browse' + ${query + (currentPage + 1)}}" style="color:green;">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </body>
+
+</html>
